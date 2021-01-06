@@ -1,0 +1,15 @@
+$replace($rreplace(
+$if($eq(%albumartist%,Various Artists),
+        [Various Artists],
+	$left($if2(%albumartistsort%,%artistsort%),1)/$left($rreplace($if2(%albumartistsort%,%artistsort%),; [^\)]+,), 60))
+/
+$if(%date%,[$left(%date%,4)] )$left($replace(%album%,/,), 70)
+$if($gt(%totaldiscs%,1),$if(%discnumber%, \(Disc %discnumber%\),),)
+/
+,[:?"_]+,),  , )
+
+$set(_feat,$rsearch(%artist%,\(?<=\\sfeat\\.\).*|\(?<=\\sft\\.\).*|\(?<=\\sFt\\.\).*|\(?<=\\sFeat\\.\).*))
+$set(_feat,$if(%_feat%,%_feat%,$rsearch(%artist%,\(?<=\\sfeat\\s\).*|\(?<=\\sft\\s\).*|\(?<=\\sFt\\s\).*|\(?<=\\sFeat\\s\).*)))
+$set(artist,$if(%_feat%,$rreplace(%artist%, feat\\.?.*| Feat\\.?.*| Ft\\.?.*| ft\\.?.*,),%artist%))
+%artist% - %title%$if(%_feat%,$if($rsearch(%title%,\\sfeat\\.?|\\sFeat\\.?|\\sft\\.?|\\sFt\\.?),, feat.%_feat%),)
+
